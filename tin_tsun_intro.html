@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>インタラクティブ・レポート：暇72のちんちんつんつんゲーム</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Warm Neutral (Slate, Stone, Amber) -->
+    <!-- Application Structure Plan: A single-page application with a fixed top navigation bar for smooth scrolling to thematic sections (概要, ルール, 由来, 安全版). This structure was chosen to allow users to quickly jump to the information they are most interested in, rather than forcing a linear reading of the original report. The core of the application is an interactive "game simulation" in the rules section, which transforms the static description into a hands-on experience, enhancing user engagement and understanding of the game's core mechanic. The layout uses cards and a clear visual hierarchy to organize information logically and improve readability on all devices. -->
+    <!-- Visualization & Content Choices: Report Info: Game Rules -> Goal: Explain the core mechanic -> Viz/Presentation: Interactive HTML diagram and buttons -> Interaction: User clicks a button to "guess" the word, receiving visual feedback. Justification: This directly engages the user in the game's primary action (listening/guessing), making the rule more memorable than a static text list. Library/Method: Vanilla JS and Tailwind CSS. Report Info: Origin/Spread -> Goal: Show the timeline of events -> Viz/Presentation: Vertical timeline layout. Justification: A timeline is more visually compelling and easier to scan for chronological information than a bulleted list. Library/Method: HTML and Tailwind CSS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #f59e0b; /* amber-500 */
+            border-bottom-color: #f59e0b; /* amber-500 */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .game-choice-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .game-choice-btn:hover {
+            transform: scale(1.05);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.375rem;
+            top: 0.25rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 9999px;
+            background-color: #f59e0b; /* amber-500 */
+            border: 4px solid #f1f5f9; /* slate-100 */
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-white/80 backdrop-blur-lg shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-3">
+            <div class="flex justify-between items-center">
+                <h1 class="text-xl md:text-2xl font-bold text-slate-700">暇72の「ちんちんつんつんゲーム」</h1>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#overview" class="nav-link text-slate-600 font-semibold">概要</a>
+                    <a href="#rules" class="nav-link text-slate-600 font-semibold">ルール</a>
+                    <a href="#history" class="nav-link text-slate-600 font-semibold">由来と広まり</a>
+                    <a href="#safe-version" class="nav-link text-slate-600 font-semibold">安全版</a>
+                </div>
+                <div class="md:hidden">
+                    <select id="mobile-nav" class="bg-slate-100 border border-slate-300 rounded-md p-2 text-slate-700">
+                        <option value="#overview">概要</option>
+                        <option value="#rules">ルール</option>
+                        <option value="#history">由来と広まり</option>
+                        <option value="#safe-version">安全版</option>
+                    </select>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        
+        <section id="overview" class="mb-16 scroll-mt-24">
+            <div class="card p-8">
+                <h2 class="text-3xl font-bold text-amber-600 mb-4">ゲーム概要</h2>
+                <p class="text-lg text-slate-600 leading-relaxed">
+                    このセクションでは、配信者／歌い手である<strong>暇72</strong>さん（シクフォニ所属）によって広まったネタ企画「ちんちんつんつんゲーム」の基本情報を紹介します。このゲームの魅力と、なぜ多くのファンに愛されているのか、その核心に迫ります。
+                </p>
+                <div class="mt-6 border-l-4 border-amber-400 pl-4">
+                    <p class="text-xl font-semibold text-slate-700">
+                        ゲームの核心は「<span class="text-amber-700">スティッチの声真似</span>で発せられた“ちんちん”か“つんつん”を聞き分ける」という、シンプルながらも奥深い聞き取りクイズです。
+                    </p>
+                    <p class="text-sm text-slate-500 mt-2">出典：ファンブログのプロフィール紹介</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="rules" class="mb-16 scroll-mt-24">
+            <div class="card p-8">
+                <h2 class="text-3xl font-bold text-amber-600 mb-4">基本ルールと遊び方</h2>
+                <p class="text-lg text-slate-600 leading-relaxed mb-8">
+                    ここではゲームの基本的な流れを解説します。公式の固定ルールはなく、罰ゲームなどは状況に応じてアドリブで追加されるのが特徴です。下のボタンをクリックして、ゲームの雰囲気を体験してみてください。
+                </p>
+
+                <div class="text-center p-6 bg-slate-100 rounded-lg">
+                    <p class="text-lg font-semibold mb-4">進行役がスティッチの声真似で言いました！どっちでしょう？</p>
+                    <div id="game-audio-placeholder" class="text-4xl mb-4">🎤</div>
+                    <div class="flex justify-center gap-4 md:gap-8">
+                        <button id="choice1" class="game-choice-btn w-32 md:w-40 py-3 px-4 bg-sky-500 text-white font-bold rounded-lg shadow-lg">ちんちん</button>
+                        <button id="choice2" class="game-choice-btn w-32 md:w-40 py-3 px-4 bg-pink-500 text-white font-bold rounded-lg shadow-lg">つんつん</button>
+                    </div>
+                    <p id="game-result" class="mt-4 text-lg font-semibold h-6"></p>
+                </div>
+
+                <div class="mt-8 grid md:grid-cols-2 gap-6">
+                    <div class="card p-6 bg-slate-50">
+                        <h3 class="font-bold text-xl mb-2 text-slate-700">類似ゲームとの違い</h3>
+                        <p class="text-slate-600">飲み会ゲーム「ちんちん侍」は指名とコール＆レスポンスが主体のテンポゲームです。一方、このゲームは<strong>声真似の聞き取りクイズ</strong>であり、全く異なる性質を持ちます。</p>
+                    </div>
+                    <div class="card p-6 bg-red-50 border border-red-200">
+                        <h3 class="font-bold text-xl mb-2 text-red-700">言葉に関する注意</h3>
+                        <p class="text-red-600">「ちんちん」は男性器を指す俗語です。このゲームを遊ぶ際は、場所や参加者の年齢層に十分配慮することが重要です。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="history" class="mb-16 scroll-mt-24">
+            <div class="card p-8">
+                <h2 class="text-3xl font-bold text-amber-600 mb-4">由来と広まり</h2>
+                 <p class="text-lg text-slate-600 leading-relaxed mb-8">
+                    このゲームがどのようにして生まれ、ファンや他の配信者の間で広まっていったのか、その経緯を時系列で追います。SNSでの投稿が大きなきっかけとなりました。
+                </p>
+                <div class="relative pl-10 border-l-2 border-slate-200">
+                    <div class="timeline-item mb-10 relative">
+                        <p class="font-bold text-slate-500">2024年7月19日</p>
+                        <h3 class="text-xl font-semibold text-slate-800 mt-1">サブアカウントでの投稿</h3>
+                        <p class="text-slate-600 mt-2">暇72さんのサブアカウントが「すちんちんツンツンゲーム」と題したショート動画を案内。これが確認できる初期の言及の一つです。</p>
+                    </div>
+                    <div class="timeline-item mb-10 relative">
+                        <p class="font-bold text-slate-500">2024年12月22日</p>
+                        <h3 class="text-xl font-semibold text-slate-800 mt-1">本アカウントでの拡散</h3>
+                        <p class="text-slate-600 mt-2">本アカウントから「一緒にちんちんつんつんゲームします？」とポストされ、ファンとの交流の中で定番ネタとして定着していきました。</p>
+                    </div>
+                    <div class="timeline-item relative">
+                        <p class="font-bold text-slate-500">現在</p>
+                        <h3 class="text-xl font-semibold text-slate-800 mt-1">TikTokなどでの広がり</h3>
+                        <p class="text-slate-600 mt-2">暇72さんだけでなく、「ぷりっつ」さんや「いるま」さんなど、他の配信者も交えて遊ぶ動画がTikTok等で拡散され、さらに知名度が高まっています。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="safe-version" class="scroll-mt-24">
+            <div class="card p-8 bg-emerald-50 border border-emerald-200">
+                <h2 class="text-3xl font-bold text-emerald-700 mb-4">やってみよう！安全版アレンジ</h2>
+                <p class="text-lg text-emerald-800 leading-relaxed mb-6">
+                    元の言葉遣いに抵抗がある場合や、より広い層で楽しみたい方向けに、下ネタ要素をなくしたアレンジルールを紹介します。これなら誰でも気軽に楽しめます。
+                </p>
+                <ol class="list-decimal list-inside space-y-4 text-emerald-900">
+                    <li class="text-lg"><span class="font-bold">曖昧な発音：</span>進行役はキャラクターの声真似などで「チン」か「ツン」と短く曖昧に発音します。</li>
+                    <li class="text-lg"><span class="font-bold">即時回答：</span>参加者はそれを聞き、どちらだったかを挙手やカードですぐに回答します。</li>
+                    <li class="text-lg"><span class="font-bold">軽い罰ゲーム：</span>間違えた人には、腕立て1回やデコピンなど、その場でできる軽い罰ゲームを与えます。</li>
+                    <li class="text-lg"><span class="font-bold">交代制：</span>進行役を交代しながら続けることで、全員が参加しやすくなります。</li>
+                </ol>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-800 text-slate-300 mt-16 py-6">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2025 Interactive Report. All information is based on publicly available data.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const gameResult = document.getElementById('game-result');
+            const choice1 = document.getElementById('choice1');
+            const choice2 = document.getElementById('choice2');
+
+            const handleChoice = (isCorrect) => {
+                if (isCorrect) {
+                    gameResult.textContent = '正解！🎉';
+                    gameResult.style.color = '#22c55e'; // green-500
+                } else {
+                    gameResult.textContent = '残念！不正解！😂';
+                    gameResult.style.color = '#ef4444'; // red-500
+                }
+                setTimeout(() => {
+                    gameResult.textContent = '';
+                }, 2000);
+            };
+
+            choice1.addEventListener('click', () => handleChoice(Math.random() > 0.5));
+            choice2.addEventListener('click', () => handleChoice(Math.random() > 0.5));
+
+            const mobileNav = document.getElementById('mobile-nav');
+            mobileNav.addEventListener('change', (e) => {
+                window.location.hash = e.target.value;
+            });
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                        });
+                    }
+                });
+            }, { rootMargin: "-50% 0px -50% 0px" });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+
+</body>
+</html>
